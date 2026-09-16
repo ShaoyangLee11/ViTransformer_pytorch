@@ -1,0 +1,32 @@
+img_size: 28
+
+patch_size: 7
+
+
+batch_size: 64
+
+# Also used as d_model
+d_model: 64
+
+head: 8
+
+N: 4
+
+# We use MNIST in this porj
+classification: 10
+
+
+in_chans: 1
+
+model_folder: 'weight'
+
+model_basename: 'vtmomdel_'
+
+experiment_name: 'runs/vtmodel'
+
+
+lr: 0.0001
+
+num_epochs: 50
+
+preload: True
