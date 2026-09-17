@@ -37,7 +37,7 @@ class PatchEmbedding(nn.Module):
         self.flatten=flatten
 
         self.proj=nn.Conv2d(in_chans,embed_dim,kernel_size=patch_size,stride=patch_size) #(B,C,H,W)-->(B,e_d,grid_size[0],grid_size[1])
-        self.norm=LayerNormalization()
+     
 
         self.cls_token=nn.Parameter(torch.randn(1,1,embed_dim))
 
@@ -54,7 +54,7 @@ class PatchEmbedding(nn.Module):
             cls_token = self.cls_token.expand(B, -1, -1)
             x=torch.cat([cls_token,x],dim=1) # (B,p_n,e_d)-->(B,patch_num+1,e_d)
 
-        return self.norm(x)
+        return x
 
 # (B,patch_num,embed_dim)  or  (B,patch_num,d_model)
 
@@ -115,7 +115,7 @@ class MultiHeadAttention(nn.Module):
         assert d_model%h==0,"Number of heads is not allowed"
 
         self.dropout=nn.Dropout(dropout)
-        self.norm=LayerNormalization()
+
 
     @staticmethod
     def calc_attention(query:torch.Tensor,key:torch.Tensor,value:torch.Tensor):
@@ -144,7 +144,7 @@ class MultiHeadAttention(nn.Module):
 
         x=x.transpose(1,2).reshape(x.shape[0],-1,self.h*self.d_k)
 
-        return self.norm(self.dropout(self.w_o(x)))
+        return self.dropout(self.w_o(x))
 
 class ResidualBlock(nn.Module):
     def __init__(self,dropout:float=0.1):
@@ -153,8 +153,9 @@ class ResidualBlock(nn.Module):
         self.norm=LayerNormalization()
 
     def forward(self,x,sublayer):
-        x=x+sublayer(x)
         x=self.norm(x)
+        x=x+sublayer(x)
+       
 
         return self.dropout(x)
 
