@@ -41,6 +41,8 @@ def validation_for_vit(num_examples=2):
     
     with torch.no_grad():
         count=0
+        correct=0
+        acc=0.0
         for batch,labels in val_dataloader:
             count+=1
 
@@ -55,7 +57,12 @@ def validation_for_vit(num_examples=2):
             print(f'PREDICTED TEXT:{pred_num}')
             print('-------------------------')
 
+            if expect_num==pred_num:
+                correct+=1
+
             if count==num_examples:
+                acc=correct/count
+                print(f'ACCURACY:{acc}')
                 break
 
 if __name__=='__main__':
